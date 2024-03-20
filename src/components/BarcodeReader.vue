@@ -1,9 +1,13 @@
+<script setup>
+import DataVisualizer from './DataVisualizer.vue';
+</script>
 <template>
     <div>
       <input type="file" accept="image/*" @change="handleFileInput">
       <div v-if="barcodeData">
         <p>Barcode Data: {{ barcodeData }}</p>
       </div>
+      <DataVisualizer :barcode="barcodeData" />
     </div>
   </template>
   
