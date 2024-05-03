@@ -3,7 +3,10 @@ import DataVisualizer from './DataVisualizer.vue';
 </script>
 <template>
     <div>
+      <h2>Image input:</h2>
       <input type="file" accept="image/*" @change="handleFileInput">
+      <h2>User input:</h2>
+      <input type="number" v-model="this.barcodeData" />
       <div v-if="barcodeData">
         <p>Barcode Data: {{ barcodeData }}</p>
       </div>
@@ -21,6 +24,9 @@ import DataVisualizer from './DataVisualizer.vue';
       };
     },
     methods: {
+      handleUserInput(){
+
+      },
       handleFileInput(event) {
         const file = event.target.files[0];
         if (file) {

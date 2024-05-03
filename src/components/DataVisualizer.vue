@@ -1,9 +1,9 @@
 <script setup>
 import axios from 'axios';
-import { defineProps,ref } from 'vue';
+import { defineProps, ref } from 'vue';
 
 const props = defineProps({
-    barcode: String
+  barcode: String
 })
 
 const apiUrl = 'https://world.openfoodfacts.net/api/v2/product';
@@ -13,6 +13,8 @@ const product = ref(null);
 const errorMessage = ref(null);
 
 const loadProduct = async () => {
+  product.value = null; 
+  errorMessage.value = null;
   try {
     if (!props.barcode) {
       throw new Error('barcode is null');
@@ -24,60 +26,44 @@ const loadProduct = async () => {
       throw new Error(`Product data is null`);
     }
 
-    product.value = response.data.product;
+    const nutriscoreData = response.data.product.nutriscore_data;
+    const extractedData = {
+      sugar: nutriscoreData.sugars,
+      salt: nutriscoreData.sodium,
+      proteins: nutriscoreData.proteins
+    };
+
+    product.value = {
+      product_name: response.data.product.product_name,
+      nutrition_grades: response.data.product.nutrition_grades,
+      nutrition_data: extractedData
+    };
   } catch (error) {
     errorMessage.value = `Error fetching product data: ${error.message}`;
   }
 };
-
 </script>
 
 <template>
-    <div id="product-info">
-        <p v-if="product">Product name: {{ product.product_name }}</p>
-        <p v-if="product">Nutrition grade: {{ product.nutrition_grades }}</p>
-        <h3 v-if="product">Nutrition data: </h3>
-        <div v-if="product" v-for="(value, key) in product.nutriscore_data" :key="key" class="item">
-            <span class="label">{{ key }}:</span>
-            <span class="value">{{ value }}</span>
-        </div>
-        <p v-if="errorMessage">Error: {{ errorMessage }}</p>
-        <button @click="loadProduct">Load product</button>
+  <div id="loadfunction">
+    <button @click="loadProduct">Load product</button>
+  </div>
+  <div id="product-info">
+    <p v-if="product">Product name: {{ product.product_name }}</p>
+    <p v-if="product">Nutrition grade: {{ product.nutrition_grades }}</p>
+    <h3 v-if="product">Nutrition data: </h3>
+    <div v-if="product" class="item">
+      <span class="label">Sugar: </span>
+      <span class="value"> {{ product.nutrition_data.sugar }}</span>
     </div>
+    <div v-if="product" class="item">
+      <span class="label">Salt: </span>
+      <span class="value"> {{ product.nutrition_data.salt }}</span>
+    </div>
+    <div v-if="product" class="item">
+      <span class="label">Proteins: </span>
+      <span class="value"> {{ product.nutrition_data.proteins }}</span>
+    </div>
+    <p v-if="errorMessage">Error: {{ errorMessage }}</p>
+  </div>
 </template>
-
-<script>
-
-export default {
-    data(){
-        return{
-            product:null,
-            errorMessage:null,
-        }
-    },
-
-    methods: {
-//         loadProduct: async() => {
-//             try {
-//                 if (!barcode) {
-//                     throw new Error('barcode is null')
-//                 }
-
-//                 const response = await axios.get(`${apiUrl}/${barcode}${apiFields}`)
-                
-//                 if (!response.data.product) {
-//                     throw new Error('Product is null')
-//                 }
-
-//                 this.product.value = response.data.product
-
-//             }catch (error) {
-//                 console.log("error", error.message)
-//                 this.errorMessage.value = `Error fetching product data: ${error.message}`;
-//             }
-        },
-//     }
-}
-
-
-</script>
