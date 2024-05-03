@@ -6,7 +6,7 @@ import DataVisualizer from './DataVisualizer.vue';
       <h2>Image input:</h2>
       <input type="file" accept="image/*" @change="handleFileInput">
       <h2>User input:</h2>
-      <input type="number" v-model="this.barcodeData" />
+      <input type="number" v-model="barcodeData" />
       <div v-if="barcodeData">
         <p>Barcode Data: {{ barcodeData }}</p>
       </div>
